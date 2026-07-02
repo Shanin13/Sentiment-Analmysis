@@ -13,7 +13,7 @@ os.makedirs(log_dir, exist_ok=True)
 logger = logging.getLogger("model_evaliating")
 logger.setLevel(logging.DEBUG)
 
-file_handler = logging.FileHandler(os.path.join(log_dir, "data_injestion.log"))
+file_handler = logging.FileHandler(os.path.join(log_dir, "data_evaluation.log"))
 file_handler.setLevel(logging.DEBUG)
 
 console_handler = logging.StreamHandler()
