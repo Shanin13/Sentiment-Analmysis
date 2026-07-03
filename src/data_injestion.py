@@ -3,7 +3,7 @@ import logging
 import pandas as pd
 import ssl
 from sklearn.model_selection import train_test_split
-
+import yaml
 # Fix SSL certificate verification error on macOS
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -26,7 +26,9 @@ console_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 logger.addHandler(console_handler)
 
+
 def load_data(file_path):
+    #loading dataset from the given path
     try:
         df = pd.read_csv(file_path)
         logger.debug("Data loaded successfully from {}".format(file_path))
@@ -36,6 +38,7 @@ def load_data(file_path):
         raise
 
 def preprocessing(df):
+    #Removing unnecessary columns and renaming the remaining columns for better understanding   
     try:
         df.drop(columns=['Unnamed: 2', 'Unnamed: 3', 'Unnamed: 4'], inplace=True)
         df.rename(columns={'v1': 'label', 'v2': 'text'}, inplace=True)
@@ -49,6 +52,7 @@ def save_data(df, file_path):
     try:
         raw_data_path = os.path.join(file_path, 'raw')
         os.makedirs(raw_data_path, exist_ok=True)
+        test_size= params['data_ingestion']['test_size']
         train_data, test_data = train_test_split(df, test_size=0.2, random_state=2)
         train_data.to_csv(os.path.join(raw_data_path, 'train.csv'), index=False)
         test_data.to_csv(os.path.join(raw_data_path, 'test.csv'), index=False)
@@ -60,9 +64,12 @@ def save_data(df, file_path):
 def main():
     try:
         data_url = "https://raw.githubusercontent.com/vikashishere/Datasets/main/spam.csv"
+        params = load_params("params.yaml")
+        
+        
         data = load_data(data_url)
         preprocessed_data = preprocessing(data)
-        save_data(preprocessed_data, "./data")
+        save_data(preprocessed_data, "./data", params=params)
 
     except Exception as e:
         logger.error("Error occurred in main function: {}".format(e))
