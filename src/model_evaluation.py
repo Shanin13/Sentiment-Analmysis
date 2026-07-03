@@ -106,17 +106,20 @@ def main():
         x_test = file.iloc[:,:-1].values
         y_test = file.iloc[:,-1].values
     
-        metrics = model_evaluate(x_test,y_test,clf)
+        metrics = model_evaluate(x_test, y_test, clf)
+        
+        # Get predictions for metrics logging
+        y_pred = clf.predict(x_test)
 
         params = load_params("params.yaml")
 
         with Live(save_dvc_exp=True) as live:
-            live.log_metric('accuracy', accuracy_score(y_test, y_test))
-            live.log_metric('precision', precision_score(y_test, y_test))
-            live.log_metric('recall', recall_score(y_test, y_test))
+            live.log_metric('accuracy', accuracy_score(y_test, y_pred))
+            live.log_metric('precision', precision_score(y_test, y_pred))
+            live.log_metric('recall', recall_score(y_test, y_pred))
 
             live.log_params(params)
-        save_metrics(metrics,'reports/metrics.json')
+        save_metrics(metrics, 'reports/metrics.json')
 
     except Exception as e:
        logger.error('Failed to complete the model evaluation process: %s', e)

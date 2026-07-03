@@ -1,18 +1,18 @@
 stages:
   data_injestion:
     cmd: python3 src/data_injestion.py
-    deps: 
+    deps:
     - src/data_injestion.py
     outs:
     - data/raw
 
   data_preprocessing:
     cmd: python3 src/preprocessing.py
-    deps: 
-    - src/preprocessing.py 
+    deps:
+    - src/preprocessing.py
     - data/raw
     outs:
-    - data/interim 
+    - data/interim
 
   feature_engineering:
     cmd: python3 src/feature_engineering.py
@@ -32,7 +32,7 @@ stages:
 
   model_evaluation:
     cmd: python3 src/model_evaluation.py
-    deps: 
+    deps:
     - src/model_evaluation.py
     - models/random_forest_model.pkl
     metrics:
@@ -42,3 +42,10 @@ stages:
 
 
 
+params:
+- dvclive/params.yaml
+metrics:
+- dvclive/metrics.json
+plots:
+- dvclive/plots/metrics:
+    x: step
